@@ -9,6 +9,8 @@ import LockIcon from '../static/icon/lock.svg'
 const SignInInputField = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [continueButtonLoading, setContinueButtonLoading] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,21 +29,26 @@ const SignInInputField = () => {
   };
 
   const handleSignIn = () => {
-    const fetchData = async () => {
+    setContinueButtonLoading(true);
+
+    const authenticationRequest = async () => {
       try {
         const authenticationResult = await EmaliPasswordAuthenticate(email, password);
-
         if (authenticationResult === 200) {
+          setContinueButtonLoading(false);
           navigate('/main');
         } else {
+          setContinueButtonLoading(false);
           navigate('/signin', { state: { msg: 'Authentication failed.\nPlease check your email and password.', email } });
         }
       } catch (error) {
+        setContinueButtonLoading(false);
         navigate('/signin', { state: { msg: 'Something goes wrong. Please try again later.', email } });
       }
+      setContinueButtonLoading(false);
     };
 
-    fetchData();
+    authenticationRequest();
   };
 
   const handleKeyDown = (e) => {
@@ -73,7 +80,7 @@ const SignInInputField = () => {
         />
       </div>
       <div className='m-3'>
-        <SignInButton signInEvent={handleSignIn} />
+        <SignInButton signInEvent={handleSignIn} loading={continueButtonLoading}/>
       </div>
     </div>
   );

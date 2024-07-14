@@ -37,6 +37,9 @@ const SignUpPage = () => {
     const [name, setName] = useState('');
     const [dob, setDob] = useState(null);
     const [gender, setGender] = useState('');
+    const [verifyButtonLoading, setVerifyButtonLoading] = useState(false);
+    const [sendButtonLoading, setSendButtonLoading] = useState(false);
+    const [continueButtonLoading, setContinueButtonLoading] = useState(false);
 
     //? State Messages
     const [passwordMsg, setPasswordMsg] = useState(''); // 패스워드 일치 여부 메시지 
@@ -106,9 +109,12 @@ const SignUpPage = () => {
 
     //^ 이메일 전송 핸들러 
     const handleSendEmail = () => {
+        setSendButtonLoading(true);
+
         // 이메일 형식 확인 
         if(!ValidateEmail(email)) {
             setEmailSentResult("Invalid Email Format");
+            setSendButtonLoading(false);
             return;
         }
 
@@ -119,6 +125,7 @@ const SignUpPage = () => {
                 const userCheckResult = await UserExistCheck(email);
                 if(userCheckResult.status_code !== 200){
                     setEmailSentResult("Email Already Exists.");
+                    setSendButtonLoading(false);
                     return;
                 }
                 
@@ -134,7 +141,9 @@ const SignUpPage = () => {
             }
             catch (error) {
                 setEmailSentResult("Please Try Again Later");
+                setSendButtonLoading(false);
             }
+            setSendButtonLoading(false);
         };
 
         emailSendRequest();
@@ -151,6 +160,7 @@ const SignUpPage = () => {
 
     //^ 이메일 확인 핸들러 
     const handleVerifyEmail = () => {
+        setVerifyButtonLoading(true);
         const emailVerifyRequest = async () => {
             try {
                 // 이메일 확인하기 
@@ -164,9 +174,11 @@ const SignUpPage = () => {
                 else{
                     setEmailSentResult(emailVerifyResult.msg);
                 }
+                setVerifyButtonLoading(false);
             }
             catch (error) {
                 setEmailSentResult("Please Try Again Later");
+                setVerifyButtonLoading(false);
             }
         };
 
@@ -175,6 +187,8 @@ const SignUpPage = () => {
 
     //^ 회원가입 진행하기 
     const handleContinue = () => {
+        setContinueButtonLoading(true);
+
         const signUpRequest = async () => {
             try {
                 // 회원가입 요청 보내기 
@@ -188,14 +202,18 @@ const SignUpPage = () => {
 
                 // 회원가입에 성공했으면 메인 화면으로 리다이렉트 
                 if(signUpResult === 200){
+                    setContinueButtonLoading(false);
                     navigate('/main');
                 }
                 else{
                     setSignUpResult("Please Try Again Later");
+                    setContinueButtonLoading(false);
                 }
             } catch (error) {
                 setSignUpResult("Please Try Again Later");
+                setContinueButtonLoading(false);
             }
+            setContinueButtonLoading(false);
         };
 
         signUpRequest();
@@ -224,7 +242,7 @@ const SignUpPage = () => {
                 {!isEmailVerified && (<>
 
                     {!isEmailReadOnly && (<>
-                        <SendButton onClick={handleSendEmail} text={"Send Verification Email"}/>
+                        <SendButton onClick={handleSendEmail} text={"Send Verification Email"} loading={sendButtonLoading} />
                     </>)}
                     
                     <div className="text-red-500 mb-5">{emailSentResult}</div>
@@ -238,7 +256,7 @@ const SignUpPage = () => {
                             onChange={handleVerificationCodeChange}
                             icon={EmailCheckIcon}
                         />
-                        <VerifyButton onClick={handleSendEmail} text={"Verify Email"}/>
+                        <VerifyButton onClick={handleVerifyEmail} text={"Verify Email"} loading={verifyButtonLoading} />
                     </>)}
                 </>)}
 
@@ -299,8 +317,8 @@ const SignUpPage = () => {
                 <div className="text-red-500 mb-5">{signUpResult}</div>
             </div>
 
-            <div className="mt-auto w-full">
-                <ContinueButton text={"Continue"} onClick={handleContinue} disabled={!isContinueVisible} />
+            <div className="w-full flex justify-center">
+                <ContinueButton text={"Continue"} onClick={handleContinue} loading={continueButtonLoading} disabled={!isContinueVisible} />
             </div>
         </div>
     );

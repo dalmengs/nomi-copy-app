@@ -11,7 +11,7 @@ const SignUpTag = () => {
 
   return (
     <div
-      className="font-bold mr-[15px]"
+      className="text-gray-500 cursor-pointer hover:text-black mr-[15px]"
       onClick={onclickEvent}
     >
      Sign Up

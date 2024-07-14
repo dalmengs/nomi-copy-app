@@ -16,6 +16,7 @@ const InputField = ({ id, type, placeholder, value, onChange, icon, isDate, isSe
           maxDate={new Date()}
           shouldCloseOnSelect
           readOnly={readOnly}
+          wrapperClassName="w-full"
         />
         {icon && <img src={icon} className="absolute left-3 top-1/2 transform -translate-y-1/2" />}
       </div>

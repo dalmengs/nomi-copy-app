@@ -4,7 +4,7 @@ import axios from 'axios';
 const TokenAuthenticate = async () => {
     const token = localStorage.getItem('daly_authentication_token');
     
-    if(!token) return false;
+    if(!token) return null;
 
     try{
         const response = await axios.post(
@@ -15,14 +15,14 @@ const TokenAuthenticate = async () => {
         const data = response.data;
         if (data.status_code === 200) {
             localStorage.setItem('daly_authentication_token', data.data.token);
-            return true;
+            return data.data;
         }
         else {
-            return false;
+            return null;
         }
     }
     catch(error){
-        return false;
+        return null;
     }
 }
 

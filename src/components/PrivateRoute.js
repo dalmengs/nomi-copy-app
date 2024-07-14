@@ -1,30 +1,38 @@
 import React, { useEffect, useState }  from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { UserProvider } from '../context/UserContext';
+import { useLocation } from 'react-router-dom';
 
 import checkAuthenticate from '../utils/TokenAuthenticate';
 
 const PrivateRoute = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const [authentication, setAuthentication] = useState(null);
+    const location = useLocation();
 
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const isAuthenticated = await checkAuthenticate();
-          setIsAuthenticated(isAuthenticated);
+          const authenticationResult = await checkAuthenticate();
+          if(authenticationResult) setAuthentication(authenticationResult);
         }
         catch (error) {
-          setIsAuthenticated(false);
         }
       };
   
       fetchData();
-    }, []);
+    }, [location]);
   
-    if (isAuthenticated === null) {
+    if (authentication === null) {
       return null;
     }
   
-    return isAuthenticated ? <Outlet /> : <Navigate to="/signin" />;
+    return authentication ? (
+      <UserProvider value={authentication}>
+        <Outlet />
+      </UserProvider>
+    ) : (
+      <Navigate to="/signin" />
+    );
   };
 
 export default PrivateRoute;

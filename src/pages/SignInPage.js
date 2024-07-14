@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import MainLogo from '../components/MainLogo'
 
 import SignInField from '../components/SignInField'
-import ForgotPasswordButton from '../components/ForgotPasswordField';
+import ForgotPasswordButton from '../components/ForgotPasswordTag';
 import SignUpButton from '../components/SignUpTag';
 
 const SignInPage = () => {

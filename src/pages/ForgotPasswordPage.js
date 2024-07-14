@@ -27,6 +27,8 @@ const ForgotPasswordPage = () => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
+    const [sendButtonLoading, setSendButtonLoading] = useState(false);
+    const [continueButtonLoading, setContinueButtonLoading] = useState(false);
 
     //? State Messages
     const [passwordMsg, setPasswordMsg] = useState(''); // 패스워드 일치 여부 메시지 
@@ -93,8 +95,11 @@ const ForgotPasswordPage = () => {
 
     //^ 이메일 전송 핸들러 
     const handleSendEmail = () => {
+        setSendButtonLoading(true);
+
         if(!ValidateEmail(email)) {
             setEmailSentResult("Invalid Email Format");
+            setSendButtonLoading(false);
             return;
         }
 
@@ -108,11 +113,13 @@ const ForgotPasswordPage = () => {
                 if(emailSendResult.status_code === 200){
                     setIsVerificationVisible(true);
                     setIsEmailReadOnly(true);
-                }      
+                }
             }
             catch (error) {
                 setEmailSentResult("Please Try Again Later.");
+                setSendButtonLoading(false);
             }
+            setSendButtonLoading(false);
         };
 
         emailSendRequest();
@@ -129,6 +136,8 @@ const ForgotPasswordPage = () => {
 
     //^ 비밀번호 변경하기 
     const handleChangeEmail = () => {
+        setContinueButtonLoading(true);
+
         const passwordChangeRequest = async () => {
             try {
                 const passwordChangeResult = await ChangePassword(
@@ -139,15 +148,19 @@ const ForgotPasswordPage = () => {
                 setPasswordChangeResult(passwordChangeResult.msg);
 
                 if(passwordChangeResult.status_code === 200){
+                    setContinueButtonLoading(false);
                     navigate('/signin');
                 }
                 else{
                     setPasswordChangeResult(passwordChangeResult.msg);
+                    setContinueButtonLoading(false);
                 }
             }
             catch (error) {
                 setPasswordChangeResult("Please Try Again Later");
+                setContinueButtonLoading(false);
             }
+            setContinueButtonLoading(false);
         };
 
         passwordChangeRequest();
@@ -174,7 +187,7 @@ const ForgotPasswordPage = () => {
                 />
 
                 {!isEmailReadOnly && (<>
-                    <SendButton onClick={handleSendEmail} text={"Send Password Change Email"}/>
+                    <SendButton onClick={handleSendEmail} text={"Send Password Change Email"} loading={sendButtonLoading}/>
                 </>)}
             
                 <div className="text-red-500 mb-5">{emailSentResult}</div>
@@ -212,7 +225,7 @@ const ForgotPasswordPage = () => {
             </div>
 
             <div className="mt-auto w-full">
-                <ContinueButton text={"Change Password"} onClick={handleChangeEmail} disabled={!isContinueVisible} />
+                <ContinueButton text={"Change Password"} onClick={handleChangeEmail} loading={continueButtonLoading} disabled={!isContinueVisible} />
             </div>
         </div>
     );

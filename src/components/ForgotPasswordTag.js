@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ForgotPasswordField = () => {
+const ForgotPasswordTag = () => {
 
   const navigate = useNavigate();
 
@@ -11,7 +11,7 @@ const ForgotPasswordField = () => {
 
   return (
     <div
-      className="font-bold"
+      className="text-gray-500 cursor-pointer hover:text-black"
       onClick={onclickEvent}
     >
      Forgot Password?
@@ -19,4 +19,4 @@ const ForgotPasswordField = () => {
   );
 };
 
-export default ForgotPasswordField;
+export default ForgotPasswordTag;
